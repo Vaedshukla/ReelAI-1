@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReelAI — Social Media Reel Product Identifier</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #06080c;
+            --surface-dark: rgba(15, 22, 36, 0.7);
+            --surface-dark-solid: #0d1321;
+            --border-glow: rgba(99, 102, 241, 0.2);
+            --border-muted: rgba(255, 255, 255, 0.06);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
+            --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            
+            --font-display: 'Outfit', sans-serif;
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(217, 70, 239, 0.12) 0px, transparent 40%),
+                radial-gradient(at 50% 100%, rgba(6, 182, 212, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 99px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 99px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        /* Container & Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            width: 100%;
+        }
+
+        /* Header Navigation */
+        header {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--border-muted);
+            backdrop-filter: blur(8px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6, 8, 12, 0.6);
+        }
+
+        .header-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 800;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.15);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #818cf8;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        /* Main content layout */
+        main {
+            flex: 1;
+            padding: 48px 0 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 span {
+            background: linear-gradient(to right, #818cf8, #d946ef, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--surface-dark);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-muted);
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            transition: var(--transition-smooth);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Search area styling */
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px;
+            border-radius: 16px;
+            border: 1px solid var(--border-muted);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+            transition: var(--transition-smooth);
+        }
+
+        .search-box:focus-within {
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.15), inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .search-input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 15px;
+            padding: 12px 16px;
+            flex: 1;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-btn {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            outline: none;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 15px;
+            padding: 0 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            transition: var(--transition-smooth);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .search-btn:active {
+            transform: translateY(1px);
+        }
+
+        .examples {
+            margin-top: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .examples-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .example-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-muted);
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-weight: 500;
+        }
+
+        .example-pill:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* API State: Loading Details */
+        .loading-container {
+            display: none;
+            max-width: 650px;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .loader {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 24px;
+        }
+
+        .loader-ring {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            margin: 8px;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            animation: loader-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-top-color: #6366f1;
+        }
+        .loader-ring:nth-child(1) {
+            animation-delay: -0.45s;
+            border-top-color: #a855f7;
+        }
+        .loader-ring:nth-child(2) {
+            animation-delay: -0.3s;
+            border-top-color: #ec4899;
+        }
+        .loader-ring:nth-child(3) {
+            animation-delay: -0.15s;
+            border-top-color: #06b6d4;
+        }
+
+        @keyframes loader-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-status {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #a855f7, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .loading-timer {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        /* Pipeline steps tracker */
+        .pipeline-tracker {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border-muted);
+        }
+
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .pipeline-step.active {
+            color: var(--text-primary);
+        }
+
+        .pipeline-step.active .step-indicator {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+            border-color: transparent;
+        }
+
+        .pipeline-step.completed {
+            color: #818cf8;
+        }
+
+        .pipeline-step.completed .step-indicator {
+            background: var(--success);
+            border-color: transparent;
+        }
+
+        .step-indicator {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            color: white;
+            transition: var(--transition-smooth);
+        }
+
+        /* Error state styling */
+        .error-container {
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            border-left: 4px solid var(--danger);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .error-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            color: var(--danger);
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .error-message {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        /* Dashboard Results Panel */
+        .dashboard {
+            display: none;
+            flex-direction: column;
+            gap: 32px;
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 968px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Inside Columns */
+        .results-col {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Result Cards custom styling */
+        .product-hero-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(217, 70, 239, 0.1) 100%), var(--surface-dark);
+            border-color: rgba(99, 102, 241, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-hero-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(217, 70, 239, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .product-brand {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+        }
+
+        .product-name {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .product-role {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .product-meta-pills {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .meta-pill {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-muted);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-pill-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-primary);
+        }
+
+        .section-title svg {
+            color: var(--accent-cyan);
+        }
+
+        /* Detail List */
+        .detail-card {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mechanism-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-muted);
+        }
+
+        /* Tag fields grid list */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-pill {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-muted);
+            color: var(--text-secondary);
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: var(--transition-smooth);
+        }
+
+        .tag-pill:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Accordion component */
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .accordion-item {
+            border: 1px solid var(--border-muted);
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.15);
+            transition: var(--transition-smooth);
+        }
+
+        .accordion-header {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.01);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: var(--transition-smooth);
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .accordion-arrow {
+            width: 16px;
+            height: 16px;
+            transition: transform 0.3s ease;
+            color: var(--text-muted);
+        }
+
+        .accordion-item.open .accordion-arrow {
+            transform: rotate(180deg);
+            color: var(--text-primary);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 16px;
+            border-top: 1px solid var(--border-muted);
+            background: rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            position: relative;
+        }
+
+        .accordion-item.open .accordion-content {
+            display: block;
+        }
+
+        /* Text copy layouts */
+        .content-box-scrollable {
+            max-height: 250px;
+            overflow-y: auto;
+            color: var(--text-secondary);
+            font-size: 13.5px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            padding-right: 8px;
+        }
+
+        .ocr-mono {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: #38bdf8;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-muted);
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: var(--text-primary);
+        }
+
+        /* Web Candidates list */
+        .candidates-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .query-pill-wrapper {
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .query-pill {
+            font-family: var(--font-mono);
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .candidate-card {
+            border: 1px solid var(--border-muted);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 16px;
+            border-radius: 12px;
+            transition: var(--transition-smooth);
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .candidate-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            line-height: 1.3;
+        }
+
+        .candidate-title a {
+            color: #818cf8;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .candidate-title a:hover {
+            color: #a5b4fc;
+            text-decoration: underline;
+        }
+
+        .candidate-link {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            word-break: break-all;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+        }
+
+        .candidate-snippet {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            border-top: 1px solid var(--border-muted);
+            padding: 24px 0;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="container header-wrap">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <!-- Film / Brain custom SVG icon -->
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+                        <line x1="7" y1="2" x2="7" y2="22"></line>
+                        <line x1="17" y1="2" x2="17" y2="22"></line>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <line x1="2" y1="7" x2="7" y2="7"></line>
+                        <line x1="2" y1="17" x2="7" y2="17"></line>
+                        <line x1="17" y1="17" x2="22" y2="17"></line>
+                        <line x1="17" y1="7" x2="22" y2="7"></line>
+                    </svg>
+                </div>
+                <span class="logo-text">ReelAI</span>
+                <span class="badge" id="version-badge">v1.0.0</span>
+            </a>
+            <div class="nav-links">
+                <a href="/docs" target="_blank" class="nav-link">Interactive API Docs</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+            <!-- Hero Introduction -->
+            <section class="hero">
+                <h1>Find The Product Behind The <span>Scroll</span></h1>
+                <p>Paste a social media reel link (Instagram, YouTube Shorts, or TikTok). ReelAI automatically downloads the video, transcribes the speech, reads visual texts, builds a structured profile, and verifies official purchase candidates.</p>
+            </section>
+
+            <!-- URL Input Panel -->
+            <section class="search-container">
+                <div class="glass-card">
+                    <form id="analyze-form">
+                        <div class="search-box">
+                            <input type="url" id="reel-url" class="search-input" placeholder="Paste your reel URL here (e.g. https://www.instagram.com/reel/...)" required autocomplete="off">
+                            <button type="submit" class="search-btn" id="submit-btn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                Analyze Reel
+                            </button>
+                        </div>
+                    </form>
+                    <div class="examples">
+                        <span class="examples-label">Try an example:</span>
+                        <button class="example-pill" data-url="https://www.instagram.com/reel/C8H12345678/">Instagram Reel</button>
+                        <button class="example-pill" data-url="https://www.youtube.com/shorts/abcd1234efg">YouTube Shorts</button>
+                        <button class="example-pill" data-url="https://www.tiktok.com/@creator/video/123456789012345">TikTok Video</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Loading Pipeline Panel -->
+            <section class="loading-container glass-card" id="loader-panel">
+                <div class="loader">
+                    <div class="loader-ring"></div>
+                    <div class="loader-ring"></div>
+                    <div class="loader-ring"></div>
+                    <div class="loader-ring"></div>
+                </div>
+                <div class="loading-status" id="load-status-text">Fetching video data...</div>
+                <div class="loading-timer">Time elapsed: <span id="elapsed-counter">0.0s</span></div>
+                
+                <div class="pipeline-tracker">
+                    <div class="pipeline-step" id="step-download">
+                        <div class="step-indicator">1</div>
+                        <span>Download reel video & isolate audio track (yt-dlp)</span>
+                    </div>
+                    <div class="pipeline-step" id="step-transcribe">
+                        <div class="step-indicator">2</div>
+                        <span>Run speech-to-text transcription (OpenAI Whisper)</span>
+                    </div>
+                    <div class="pipeline-step" id="step-ocr">
+                        <div class="step-indicator">3</div>
+                        <span>Sample frames & extract on-screen texts (EasyOCR)</span>
+                    </div>
+                    <div class="pipeline-step" id="step-fingerprint">
+                        <div class="step-indicator">4</div>
+                        <span>Synthesize product fingerprint schema (Groq Llama 3.1)</span>
+                    </div>
+                    <div class="pipeline-step" id="step-search">
+                        <div class="step-indicator">5</div>
+                        <span>Execute verification web search (Serper.dev)</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Notification Panel -->
+            <section class="error-container glass-card" id="error-panel">
+                <div class="error-header">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    Analysis Failed
+                </div>
+                <div class="error-message" id="error-details">We encountered an issue while processing the video. Ensure the URL is public and valid, or check the console logs for credentials setup.</div>
+                <button class="example-pill" onclick="resetUI()">Reset View</button>
+            </section>
+
+            <!-- Analysis Dashboard -->
+            <section class="dashboard" id="results-panel">
+                
+                <!-- Double Column Grid Layout -->
+                <div class="dashboard-grid">
+                    
+                    <!-- Left Column: Product Fingerprint -->
+                    <div class="results-col">
+                        
+                        <!-- Product Highlight -->
+                        <div class="glass-card product-hero-card">
+                            <div class="product-brand" id="res-brand">UNKNOWN BRAND</div>
+                            <h2 class="product-name" id="res-name">Analyzed Product</h2>
+                            <div class="product-role" id="res-role">No description available.</div>
+                            
+                            <div class="product-meta-pills">
+                                <div class="meta-pill">
+                                    <span class="meta-pill-label">Category:</span>
+                                    <span id="res-category">N/A</span>
+                                </div>
+                                <div class="meta-pill">
+                                    <span class="meta-pill-label">Model:</span>
+                                    <span id="res-model">N/A</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Core Mechanism -->
+                        <div class="glass-card detail-card">
+                            <div class="section-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                    <polyline points="2 17 12 22 22 17"></polyline>
+                                    <polyline points="2 12 12 17 22 12"></polyline>
+                                </svg>
+                                Core Mechanism
+                            </div>
+                            <div class="mechanism-text" id="res-mechanism">No core mechanism extracted.</div>
+                        </div>
+
+                        <!-- Extracted Brand terms / Visual cues / Export Targets -->
+                        <div class="glass-card detail-card">
+                            <div class="section-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                    <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                                </svg>
+                                Extractions & Attributes
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 16px;">
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">EXPORT DESTINATIONS</div>
+                                    <div class="tag-list" id="res-exports">
+                                        <span class="text-muted" style="font-size: 13px;">None</span>
+                                    </div>
+                                </div>
+                                <hr style="border: 0; border-top: 1px solid var(--border-muted);">
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">OCR BRAND TERMS</div>
+                                    <div class="tag-list" id="res-ocr-terms">
+                                        <span class="text-muted" style="font-size: 13px;">None</span>
+                                    </div>
+                                </div>
+                                <hr style="border: 0; border-top: 1px solid var(--border-muted);">
+                                <div>
+                                    <div style="font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px;">MEMORABLE VISUAL CLUES</div>
+                                    <div class="tag-list" id="res-visual-clues">
+                                        <span class="text-muted" style="font-size: 13px;">None</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column: Raw transcript, OCR outputs, & Google Search results -->
+                    <div class="results-col">
+                        
+                        <!-- Web Candidates -->
+                        <div class="glass-card detail-card">
+                            <div class="section-title">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                                </svg>
+                                Search Verification
+                            </div>
+                            <div class="query-pill-wrapper">
+                                Query: <span class="query-pill" id="res-search-query">N/A</span>
+                            </div>
+                            <div class="candidates-list" id="res-candidates-list">
+                                <div class="text-muted" style="font-size: 14px;">No candidates retrieved.</div>
+                            </div>
+                        </div>
+
+                        <!-- Collapsible raw text items -->
+                        <div class="accordion">
+                            
+                            <!-- Transcript -->
+                            <div class="accordion-item open">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <span>Audio Transcript (Whisper Speech-to-Text)</span>
+                                    <svg class="accordion-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="accordion-content">
+                                    <button class="copy-btn" onclick="copyText('res-transcript-text', this)">Copy</button>
+                                    <div class="content-box-scrollable" id="res-transcript-text">No audio transcript extracted.</div>
+                                </div>
+                            </div>
+
+                            <!-- Visual OCR -->
+                            <div class="accordion-item">
+                                <div class="accordion-header" onclick="toggleAccordion(this)">
+                                    <span>Detected Frame Texts (EasyOCR)</span>
+                                    <svg class="accordion-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                                <div class="accordion-content">
+                                    <button class="copy-btn" onclick="copyText('res-ocr-text', this)">Copy</button>
+                                    <div class="content-box-scrollable ocr-mono" id="res-ocr-text">No text extracted from frames.</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Reset button -->
+                <div style="text-align: center; margin-top: 16px;">
+                    <button class="example-pill" style="padding: 10px 24px; font-size: 14px;" onclick="resetUI()">Analyze Another Reel</button>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            ReelAI — Open-source product fingerprinting pipeline. Built with FastAPI, Whisper, EasyOCR, and Groq.
+        </div>
+    </footer>
+
+    <!-- Frontend Script Logic -->
+    <script>
+        // Set Version dynamically
+        fetch('/health').then(res => res.json()).then(data => {
+            if (data && data.version) {
+                document.getElementById('version-badge').innerText = 'v' + data.version;
+            }
+        }).catch(err => {});
+
+        // Setup Example pills
+        document.querySelectorAll('.example-pill').forEach(pill => {
+            pill.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                document.getElementById('reel-url').value = url;
+            });
+        });
+
+        // Accordion Toggle
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Copy content helper
+        function copyText(elementId, btn) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const oldText = btn.innerText;
+                btn.innerText = 'Copied!';
+                btn.style.color = '#10b981';
+                setTimeout(() => {
+                    btn.innerText = oldText;
+                    btn.style.color = '';
+                }, 1500);
+            }).catch(err => {
+                alert('Could not copy text.');
+            });
+        }
+
+        // UI Management States
+        const form = document.getElementById('analyze-form');
+        const loaderPanel = document.getElementById('loader-panel');
+        const errorPanel = document.getElementById('error-panel');
+        const resultsPanel = document.getElementById('results-panel');
+        const submitBtn = document.getElementById('submit-btn');
+
+        let timerInterval = null;
+        let elapsedSeconds = 0.0;
+
+        function resetUI() {
+            errorPanel.style.display = 'none';
+            resultsPanel.style.display = 'none';
+            loaderPanel.style.display = 'none';
+            form.closest('section').style.display = 'block';
+            document.querySelector('.hero').style.display = 'block';
+            
+            // Clear inputs/variables
+            clearInterval(timerInterval);
+            elapsedSeconds = 0.0;
+            document.getElementById('elapsed-counter').innerText = '0.0s';
+            
+            // Reset active pipeline tracker states
+            document.querySelectorAll('.pipeline-step').forEach(step => {
+                step.className = 'pipeline-step';
+            });
+        }
+
+        // Simulating backend pipeline stages on frontend timer triggers
+        function updateSimulatedSteps(seconds) {
+            const stepDownload = document.getElementById('step-download');
+            const stepTranscribe = document.getElementById('step-transcribe');
+            const stepOcr = document.getElementById('step-ocr');
+            const stepFingerprint = document.getElementById('step-fingerprint');
+            const stepSearch = document.getElementById('step-search');
+            const statusText = document.getElementById('load-status-text');
+
+            if (seconds < 5) {
+                stepDownload.className = 'pipeline-step active';
+                statusText.innerText = 'Downloading reel video data...';
+            } else if (seconds < 12) {
+                stepDownload.className = 'pipeline-step completed';
+                stepTranscribe.className = 'pipeline-step active';
+                statusText.innerText = 'Analyzing audio tracks (Whisper speech-to-text)...';
+            } else if (seconds < 22) {
+                stepTranscribe.className = 'pipeline-step completed';
+                stepOcr.className = 'pipeline-step active';
+                statusText.innerText = 'Extracting video frames and OCR transcribing...';
+            } else if (seconds < 32) {
+                stepOcr.className = 'pipeline-step completed';
+                stepFingerprint.className = 'pipeline-step active';
+                statusText.innerText = 'Running LLM analysis for product schema...';
+            } else {
+                stepFingerprint.className = 'pipeline-step completed';
+                stepSearch.className = 'pipeline-step active';
+                statusText.innerText = 'Cross-referencing brand terms on Google search...';
+            }
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const url = document.getElementById('reel-url').value.trim();
+            if (!url) return;
+
+            // Transition UI to loading
+            document.querySelector('.hero').style.display = 'none';
+            form.closest('section').style.display = 'none';
+            loaderPanel.style.display = 'block';
+            
+            // Start elapsed timer
+            elapsedSeconds = 0.0;
+            updateSimulatedSteps(0);
+            timerInterval = setInterval(() => {
+                elapsedSeconds += 0.1;
+                document.getElementById('elapsed-counter').innerText = elapsedSeconds.toFixed(1) + 's';
+                updateSimulatedSteps(elapsedSeconds);
+            }, 100);
+
+            // Fetch to API
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url: url })
+            })
+            .then(async response => {
+                if (!response.ok) {
+                    let detail = 'Server returned HTTP ' + response.status;
+                    try {
+                        const errData = await response.json();
+                        if (errData && errData.detail) {
+                            detail = errData.detail;
+                        }
+                    } catch (e) {
+                        // ignore JSON parse error, use default status
+                    }
+                    throw new Error(detail);
+                }
+                return response.json();
+            })
+            .then(data => {
+                clearInterval(timerInterval);
+                loaderPanel.style.display = 'none';
+                
+                // Populating results
+                document.getElementById('res-name').innerText = data.fingerprint.main_product_role ? 
+                    (extractProductName(data.fingerprint.main_product_role) || 'Identified Product') : 'Identified Product';
+                
+                document.getElementById('res-brand').innerText = data.fingerprint.rare_or_brand_like_terms_from_ocr && data.fingerprint.rare_or_brand_like_terms_from_ocr.length > 0 ?
+                    data.fingerprint.rare_or_brand_like_terms_from_ocr[0].toUpperCase() : 'UNKNOWN BRAND';
+                
+                document.getElementById('res-role').innerText = data.fingerprint.main_product_role || 'No details provided.';
+                document.getElementById('res-category').innerText = data.fingerprint.business_model_hint || 'Product';
+                document.getElementById('res-model').innerText = 'ReelAI Pipeline';
+                document.getElementById('res-mechanism').innerText = data.fingerprint.core_mechanism || 'No details provided.';
+
+                // Export Targets
+                const exportsContainer = document.getElementById('res-exports');
+                exportsContainer.innerHTML = '';
+                if (data.fingerprint.export_targets && data.fingerprint.export_targets.length > 0) {
+                    data.fingerprint.export_targets.forEach(item => {
+                        exportsContainer.innerHTML += `<span class="tag-pill">${item}</span>`;
+                    });
+                } else {
+                    exportsContainer.innerHTML = `<span class="text-muted" style="font-size: 13px;">None detected</span>`;
+                }
+
+                // OCR Terms
+                const ocrContainer = document.getElementById('res-ocr-terms');
+                ocrContainer.innerHTML = '';
+                if (data.fingerprint.rare_or_brand_like_terms_from_ocr && data.fingerprint.rare_or_brand_like_terms_from_ocr.length > 0) {
+                    data.fingerprint.rare_or_brand_like_terms_from_ocr.forEach(item => {
+                        ocrContainer.innerHTML += `<span class="tag-pill">${item}</span>`;
+                    });
+                } else {
+                    ocrContainer.innerHTML = `<span class="text-muted" style="font-size: 13px;">None detected</span>`;
+                }
+
+                // Visual Clues
+                const visualContainer = document.getElementById('res-visual-clues');
+                visualContainer.innerHTML = '';
+                if (data.fingerprint.distinctive_visual_clues && data.fingerprint.distinctive_visual_clues.length > 0) {
+                    data.fingerprint.distinctive_visual_clues.forEach(item => {
+                        visualContainer.innerHTML += `<span class="tag-pill">${item}</span>`;
+                    });
+                } else {
+                    visualContainer.innerHTML = `<span class="text-muted" style="font-size: 13px;">None detected</span>`;
+                }
+
+                // Raw Transcript & OCR text
+                document.getElementById('res-transcript-text').innerText = data.transcript || 'No speech captured.';
+                document.getElementById('res-ocr-text').innerText = data.visual_text || 'No frame text found.';
+
+                // Search Verification
+                document.getElementById('res-search-query').innerText = data.search_query || 'N/A';
+                
+                const candidatesContainer = document.getElementById('res-candidates-list');
+                candidatesContainer.innerHTML = '';
+                if (data.candidates && data.candidates.length > 0) {
+                    data.candidates.forEach(item => {
+                        candidatesContainer.innerHTML += `
+                            <div class="candidate-card">
+                                <div class="candidate-title">
+                                    <a href="${item.link}" target="_blank">
+                                        ${item.title}
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <span class="candidate-link">${item.link}</span>
+                                <div class="candidate-snippet">${item.snippet}</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    candidatesContainer.innerHTML = `<div class="text-muted" style="font-size: 14px;">No candidate results found.</div>`;
+                }
+
+                // Display dashboard
+                resultsPanel.style.display = 'block';
+            })
+            .catch(err => {
+                clearInterval(timerInterval);
+                loaderPanel.style.display = 'none';
+                document.getElementById('error-details').innerText = err.message || 'We encountered an error processing your video. Make sure the video is public, accessible, and all API keys are set.';
+                errorPanel.style.display = 'block';
+            });
+        });
+
+        // Helper to extract a short product name from a longer role sentence
+        function extractProductName(text) {
+            if (!text) return '';
+            // Split by "is a" or "is an" or "designed to" if exists, or grab the first 3-4 words
+            const markers = [' is a ', ' is an ', ' is ', ' designed to '];
+            for (let marker of markers) {
+                if (text.toLowerCase().includes(marker)) {
+                    return text.split(new RegExp(marker, 'i'))[0].trim();
+                }
+            }
+            return text.split(' ').slice(0, 4).join(' ') + '...';
+        }
+    </script>
+</body>
+</html>
