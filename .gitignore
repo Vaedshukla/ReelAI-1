@@ -1,19 +1,45 @@
-# Python
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
 
-# Env
+# ── Environment ───────────────────────────────────────────────────────────────
 .env
+.env.local
+.env.production
+venv/
+.venv/
 
-# Media files (IMPORTANT)
+# ── Media files ───────────────────────────────────────────────────────────────
 *.png
 *.jpg
 *.jpeg
 *.mp4
 *.wav
+*.mp3
+*.avi
+*.mov
 
-# Downloads folder
+# ── Downloads / temp ──────────────────────────────────────────────────────────
 backend/downloads/
+downloads/
 
-# OS junk
+# ── IDE / Editor ──────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS junk ───────────────────────────────────────────────────────────────────
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+*.log
